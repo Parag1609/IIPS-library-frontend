@@ -22,7 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+uploads/
 
 node_modules/
-.env
-uploads/

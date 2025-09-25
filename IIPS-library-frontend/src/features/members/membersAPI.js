@@ -67,7 +67,7 @@ export const updateCardStatus = async (id, status) => {
   }
 };
 
-//  Issue a book to a member
+/*//  Issue a book to a member
 export const issueBook = async (memberId, bookId) => {
   try {
     const res = await axiosClient.post(`/members/${memberId}/books/${bookId}/issue`);
@@ -88,3 +88,4 @@ export const returnBook = async (memberId, bookId) => {
     throw error;
   }
 };
+*/

@@ -38,7 +38,11 @@ export const DeleteRequest = async (id) =>{
 //Upload By CSV
 export const UploadByCSV = async (CSVdata) =>{
     try{
-        const res = await axiosClient.post(`/membership-requests/upload-csv`,CSVdata);
+        const res = await axiosClient.post(`/membership-requests/upload-csv`,CSVdata, {
+        headers: {
+          "Content-Type": "multipart/form-data", // override JSON for file
+        },
+      });
         return res.data;
     }catch(error){
         console.error(`Error in Uploading`,error);

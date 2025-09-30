@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";  // ✅ Import Link
-import "./../styles/SearchBook.css";
+import "./../../styles/SearchBook.css";
 
 function SearchBook() {
   const [searchBy, setSearchBy] = useState("Title");

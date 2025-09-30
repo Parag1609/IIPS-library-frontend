@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";   // ✅ Import Link
-import "../styles/Transaction.css";
+import "./../../styles/Transaction.css";
 
 export default function Transaction() {
   const [accession, setAccession] = useState("");

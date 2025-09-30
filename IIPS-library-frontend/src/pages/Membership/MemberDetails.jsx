@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "../styles/MemberDetails.css";
+import "./../../styles/MemberDetails.css";
 
 export default function MemberDetails() {
   const navigate = useNavigate();

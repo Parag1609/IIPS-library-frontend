@@ -1,0 +1,166 @@
+.member-details-page {
+  text-align: center;
+  padding: 20px;
+  background: url("/library-bg.jpg") no-repeat center center/cover;
+  min-height: 100vh;
+  color: #fff;
+}
+
+.page-title {
+  background: rgba(92, 53, 17, 0.9);
+  color: #f5d7b0;
+  padding: 10px;
+  font-size: 28px;
+  margin: 0;
+}
+
+.library-card {
+  background: rgba(255, 255, 255, 0.85);
+  width: 50%;
+  margin: 30px auto;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: left;
+}
+
+.card-title {
+  text-align: center;
+  background: #8b4513;
+  color: white;
+  border-radius: 25px;
+  padding: 8px;
+  width: 200px;
+  margin: 0 auto 20px auto;
+}
+
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-left {
+  flex: 1;
+  padding: 15px;
+}
+
+.card-left p {
+  margin: 12px 0;
+  font-size: 18px;
+  color: #000;
+}
+
+.barcode-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #000;
+}
+
+.barcode {
+  background: #d2a679;
+  align-items: center;
+  padding: 5px 15px;
+  border-radius: 12px;
+}
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-photo {
+  width: 120px;
+  height: 150px;
+  border: 2px solid #5a2d0c;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+.delete-btn {
+  background: #c0392b;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background: #d2a679;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.download-btn {
+  background: #2ecc71;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* Extra Details Section */
+.extra-details {
+  background: rgba(255, 255, 255, 0.85);
+  width: 50%;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 15px;
+  color: #000;
+  text-align: left;
+  font-size: 18px;
+}
+
+/* Back button */
+.back-btn {
+  margin-top: 20px;
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.delete-btn,
+.edit-btn,
+.download-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.delete-btn {
+  background-color: #c0392b;
+  color: white;
+}
+
+.edit-btn {
+  background-color: #d3ba00;
+  color: white;
+}
+
+.download-btn {
+  background-color: #27ae60;
+  color: white;
+}

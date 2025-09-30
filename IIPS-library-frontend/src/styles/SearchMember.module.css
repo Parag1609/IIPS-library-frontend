@@ -1,0 +1,116 @@
+/* All styles here are module-scoped and won't affect your global CSS */
+
+/* wrapper uses your same site background image (adjust path if necessary) */
+
+/* Search Member header */
+.page h1 {
+  margin: 0; /* kill default margin */
+  padding: 20px;
+  background-color: rgba(92, 55, 19, 0.9); /* brown bar */
+  width: 100%;
+  text-align: center;
+  color: #f5e6da;
+  box-sizing: border-box;
+}
+.page {
+  background-image: url("/library-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+
+.wrapper {
+  background: url("/library-bg.jpg") no-repeat center center/cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 18px;
+  box-sizing: border-box;
+}
+
+/* top header strip (like your design) */
+.header {
+  width: 100%;
+  background: rgba(92, 55, 19, 0.88);
+  text-align: center;
+  padding: 12px 0;
+  box-sizing: border-box;
+}
+.header h1 {
+  color: #f5e6da;
+  margin: 0;
+  font-size: 2.4rem;
+}
+
+/* search box with icon on left */
+.searchBox {
+  margin-top: 40px;
+  width: 90%;
+  max-width: 780px;
+  display: flex;
+  align-items: center;
+  background: rgba(138, 81, 38, 0.86);
+  color: #fff;
+  border: 3px solid rgba(0,0,0,0.6);
+  border-radius: 40px;
+  padding: 18px 22px;
+  box-sizing: border-box;
+}
+.icon {
+  font-size: 2.0rem;
+  margin-right: 14px;
+  color: #111;
+}
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 1.25rem;
+  padding: 6px;
+}
+
+/* search button */
+.searchBtn {
+  margin-top: 30px;
+  background: rgba(139,69,19,0.95);
+  color: #fff;
+  border: none;
+  padding: 14px 44px;
+  border-radius: 40px;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* back button */
+.backBtn {
+  margin-top: 18px;
+  background: rgba(255,255,255,0.9);
+  color: #333;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+/* responsive */
+@media (max-width: 640px) {
+  .header h1 { font-size: 1.6rem; }
+  .searchBox { padding: 12px 14px; border-radius: 30px; }
+  .input { font-size: 1rem; }
+  .searchBtn { padding: 12px 32px; font-size: 1.05rem; }
+}

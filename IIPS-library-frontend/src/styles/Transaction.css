@@ -1,0 +1,87 @@
+.transaction-container {
+  background: url("/library-bg.jpg") no-repeat center center/cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.transaction-title {
+  background: rgba(139, 69, 19, 0.9);
+  color: #f8e6d1;
+  padding: 10px 40px;
+  border-radius: 12px;
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.transaction-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.transaction-input {
+  padding: 10px;
+  width: 280px;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  text-align: center;
+}
+
+.search-btn {
+  background: #a9744f;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.transaction-result {
+  margin-top: 20px;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+}
+
+.case-box {
+  background: rgba(255, 228, 196, 0.9);
+  padding: 15px 25px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.return-btn {
+  background: #8b4513;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.issue-btn {
+  background: #5c4033;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}

@@ -14,7 +14,7 @@ import FormPage from "./pages/Membership/FormPage";
 import NewMember from "./pages/Membership/NewMember";
 import SearchMember from "./pages/Membership/SearchMember";
 import MemberDetails from "./pages/Membership/MemberDetails";
-
+import Viewmembershiprequest from "./pages/Membership/Viewmembershiprequest";
 // Catalogue Pages
 import Catalogue from "./pages/Catalogue/Catalogue";
 import CatalogueUploadCSV from "./pages/Catalogue/CatalogueUploadCSV";
@@ -43,6 +43,7 @@ export default function App() {
         <Route path="/membership/new" element={<NewMember />} />
         <Route path="/membership/search" element={<SearchMember />} />
         <Route path="/membership/details/:name" element={<MemberDetails />} />
+        <Route path="/membership/requests" element={<Viewmembershiprequest />} />
 
         {/* Catalogue */}
         <Route path="/catalogue" element={<Catalogue />} />

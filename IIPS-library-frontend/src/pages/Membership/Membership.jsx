@@ -11,14 +11,8 @@ export default function Membership() {
         <Link to="/membership/add-request">
           <button>Add Membership Request</button>
         </Link>
-        <Link to="/membership/uploadcsv">
-          <button>Upload CSV</button>
-        </Link>
-        <Link to="/membership/uploadexcel">
-          <button>Upload Excel</button>
-        </Link>
-        <Link to="/membership/form">
-          <button>Form</button>
+        <Link to="/membership/requests">
+          <button>View Membership Requests</button>
         </Link>
         <Link to="/membership/new">
           <button>New Member</button>

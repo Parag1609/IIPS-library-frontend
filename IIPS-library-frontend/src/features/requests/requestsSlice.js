@@ -101,15 +101,7 @@ const initialState = {
     approve: false,
     reject: false,
   },
-  error: {
-    fetch: null,
-    fetchById: null,
-    delete: null,
-    upload: null,
-    submit: null,
-    approve: null,
-    reject: null,
-  },
+  error: null,
   successMessage: null,
 };
 
@@ -138,7 +130,7 @@ const membershipRequestsSlice = createSlice({
     builder
       .addCase(fetchRequestsAsync.pending, (state) => {
         state.loading.fetch = true;
-        state.error.fetch = null;
+        state.error = null;
       })
       .addCase(fetchRequestsAsync.fulfilled, (state, action) => {
         state.loading.fetch = false;
@@ -147,14 +139,14 @@ const membershipRequestsSlice = createSlice({
       })
       .addCase(fetchRequestsAsync.rejected, (state, action) => {
         state.loading.fetch = false;
-        state.error.fetch = action.payload;
+        state.error = action.payload;
       });
 
     // FETCH BY ID
     builder
       .addCase(fetchRequestByIdAsync.pending, (state) => {
         state.loading.fetchById = true;
-        state.error.fetchById = null;
+        state.error = null;
       })
       .addCase(fetchRequestByIdAsync.fulfilled, (state, action) => {
         state.loading.fetchById = false;
@@ -163,14 +155,14 @@ const membershipRequestsSlice = createSlice({
       })
       .addCase(fetchRequestByIdAsync.rejected, (state, action) => {
         state.loading.fetchById = false;
-        state.error.fetchById = action.payload;
+        state.error = action.payload;
       });
 
     // DELETE
     builder
       .addCase(deleteRequestAsync.pending, (state) => {
         state.loading.delete = true;
-        state.error.delete = null;
+        state.error = null;
       })
       .addCase(deleteRequestAsync.fulfilled, (state, action) => {
         state.loading.delete = false;
@@ -179,14 +171,14 @@ const membershipRequestsSlice = createSlice({
       })
       .addCase(deleteRequestAsync.rejected, (state, action) => {
         state.loading.delete = false;
-        state.error.delete = action.payload;
+        state.error = action.payload;
       });
 
     // UPLOAD CSV
     builder
       .addCase(uploadByCSVAsync.pending, (state) => {
         state.loading.upload = true;
-        state.error.upload = null;
+        state.error = null;
       })
       .addCase(uploadByCSVAsync.fulfilled, (state, action) => {
         state.loading.upload = false;
@@ -196,14 +188,14 @@ const membershipRequestsSlice = createSlice({
       })
       .addCase(uploadByCSVAsync.rejected, (state, action) => {
         state.loading.upload = false;
-        state.error.upload = action.payload;
+        state.error = action.payload;
       });
 
     // SUBMIT
     builder
       .addCase(submitRequestAsync.pending, (state) => {
         state.loading.submit = true;
-        state.error.submit = null;
+        state.error = null;
       })
       .addCase(submitRequestAsync.fulfilled, (state, action) => {
         state.loading.submit = false;
@@ -212,14 +204,14 @@ const membershipRequestsSlice = createSlice({
       })
       .addCase(submitRequestAsync.rejected, (state, action) => {
         state.loading.submit = false;
-        state.error.submit = action.payload;
+        state.error = action.payload;
       });
 
     // APPROVE
     builder
       .addCase(approveRequestAsync.pending, (state) => {
         state.loading.approve = true;
-        state.error.approve = null;
+        state.error = null;
       })
       .addCase(approveRequestAsync.fulfilled, (state, action) => {
         const updatedRequest = action.payload; // returned by backend
@@ -229,14 +221,14 @@ const membershipRequestsSlice = createSlice({
       })
       .addCase(approveRequestAsync.rejected, (state, action) => {
         state.loading.approve = false;
-        state.error.approve = action.payload;
+        state.error = action.payload;
       });
 
     // REJECT
     builder
       .addCase(rejectRequestAsync.pending, (state) => {
         state.loading.reject = true;
-        state.error.reject = null;
+        state.error = null;
       })
       .addCase(rejectRequestAsync.fulfilled, (state, action) => {
          const updatedRequest = action.payload;
@@ -246,7 +238,7 @@ const membershipRequestsSlice = createSlice({
       })
       .addCase(rejectRequestAsync.rejected, (state, action) => {
         state.loading.reject = false;
-        state.error.reject = action.payload;
+        state.error = action.payload;
       });
   },
 });

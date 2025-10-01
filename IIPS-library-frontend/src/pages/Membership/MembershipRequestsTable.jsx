@@ -5,6 +5,7 @@ import {
   ApproveRequest,
   RejectRequest,
 } from "../../features/requests/requestsAPI"; // adjust path if needed
+import ShortLink from "../../utils/ShortLink";
 
 const MembershipRequestsTable = () => {
   const [requests, setRequests] = useState([]);
@@ -66,6 +67,8 @@ const MembershipRequestsTable = () => {
               <th>Course</th>
               <th>Semester</th>
               <th>Mobile No.</th>
+              <th>Fee Receipt</th>
+              <th>Photo</th>
               <th>Status</th>
               
             </tr>
@@ -77,7 +80,9 @@ const MembershipRequestsTable = () => {
                 <td>{req.First_Name + " " + req.Surname}</td>
                 <td>{req.Course}</td>
                 <td>{req.Semester}</td>
-                <td>{req.Mobile}</td>              
+                <td>{req.Mobile}</td>
+                <td><ShortLink url={req.Fee_Receipt} /></td> 
+                <td><ShortLink url={req.Passport_Size_Photo} /></td>       
                 <td>
                   <Form.Select
                     size="sm"

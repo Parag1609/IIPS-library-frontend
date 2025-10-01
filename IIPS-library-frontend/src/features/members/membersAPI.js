@@ -5,6 +5,7 @@ export const fetchMembers = async (filters = {}) => {
   try {
     const query = new URLSearchParams(filters).toString();
     const res = await axiosClient.get(`/members${query ? `?${query}` : ""}`);
+    console.log(res);
     return res.data;
   } catch (error) {
     console.error("Error fetching members:", error);

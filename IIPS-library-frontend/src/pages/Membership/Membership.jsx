@@ -17,6 +17,9 @@ export default function Membership() {
         <Link to="/membership/new">
           <button>New Member</button>
         </Link>
+        <Link to="/membership/approved-members">
+          <button>View Approved Members</button>
+        </Link>
         <Link to="/membership/search">
           <button>Search Member</button>
         </Link>

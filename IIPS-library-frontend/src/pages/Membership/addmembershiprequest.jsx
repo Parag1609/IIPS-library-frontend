@@ -7,9 +7,9 @@ export default function AddMembershipRequest() {
         <h1>Add Membership Request</h1>
       </div>
       <div className="menu">
-        <Link to="/uploadcsv"><button>Upload CSV</button></Link>
-        <Link to="/uploadexcel"><button>Upload Excel</button></Link>
-        <Link to="/form"><button>Form</button></Link>
+        <Link to="/membership/uploadcsv"><button>Upload CSV</button></Link>
+        <Link to="/membership/uploadexcel"><button>Upload Excel</button></Link>
+        <Link to="/membership/form"><button>Form</button></Link>
         <Link to="/membership"><button>⬅ Back</button></Link>
       </div>
     </div>

@@ -43,7 +43,9 @@ export const UploadByCSV = async (CSVdata) =>{
           "Content-Type": "multipart/form-data", // override JSON for file
         },
       });
+        console.log(res)
         return res.data;
+        
     }catch(error){
         console.error(`Error in Uploading`,error);
         throw error;

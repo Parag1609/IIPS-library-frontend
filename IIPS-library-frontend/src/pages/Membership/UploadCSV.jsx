@@ -1,20 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Button } from "react-bootstrap";
 import {uploadByCSVAsync} from "./../../features/requests/requestsSlice"
-export default function UploadCSV() {
-  const [file, setFile] = useState(null);
-  const [message, setMessage] = useState("");
-  const dispatch = useDispatch();
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+import UploadModal from "../../utils/UploadModal";
 
-  const handleUpload = async () => {
-    if (!file) {
-      setMessage("Please select a file first!");
-      return;
-    }
+export default function UploadCSV() {
+  const [show,setShow] = useState(false);
+  const [err,setErr] = useState("");
+  const dispatch = useDispatch();
+
+  const handleCSVUpload = async (file) => {
 
     const formData = new FormData();
     formData.append("file", file);
@@ -22,12 +18,12 @@ export default function UploadCSV() {
      try {
       const resultAction = await dispatch(uploadByCSVAsync(formData));
       if (uploadByCSVAsync.fulfilled.match(resultAction)) {
-        setMessage("File uploaded successfully!");
+        console.log("file uploaded succesfully", resultAction)
       } else {
-        setMessage(resultAction.payload || "Upload failed.");
+        setErr(resultAction.payload || "Upload failed.");
       }
     } catch (error) {
-      setMessage("An error occurred: " + error.message);
+      setErr("An error occurred: " + error.message);
     }
   };
 
@@ -36,10 +32,15 @@ export default function UploadCSV() {
       <h1>Upload CSV</h1>
       <p>Here you can upload CSV files for membership.</p>
 
-      <input type="file" accept=".csv" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload</button>
-
-      {message && <p>{message}</p>}
+      <Button onClick={() => setShow(true)}>Upload Membership CSV</Button>
+      <UploadModal
+        open={show}
+        handleClose={() => setShow(false)}
+        title="Upload Membership Requests CSV"
+        accept=".csv"
+        onUpload={handleCSVUpload}
+        err={err}
+      />
 
       <Link to="/addmembershiprequest">
         <button>⬅ Back</button>

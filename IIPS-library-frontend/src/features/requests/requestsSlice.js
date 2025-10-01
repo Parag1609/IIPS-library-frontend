@@ -192,7 +192,7 @@ const membershipRequestsSlice = createSlice({
         state.loading.upload = false;
         state.successMessage = "CSV uploaded successfully!";
         state.requests.push(...(action.payload.requests || []));
-        console.log(action.payload , action.payload.requests)
+        console.log(action.payload ,"a", action.payload.requests)
       })
       .addCase(uploadByCSVAsync.rejected, (state, action) => {
         state.loading.upload = false;

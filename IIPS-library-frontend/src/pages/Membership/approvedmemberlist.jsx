@@ -10,6 +10,7 @@ const ApprovedMemberList = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [status,setStatus] = useState("");
 
   const loadMembers = async () => {
       try {
@@ -40,11 +41,8 @@ const ApprovedMemberList = () => {
     const handleStatusChange = async (id, newStatus) => {
         try {
           await updateCardStatus(id,newStatus)
-          setRequests((prev) =>
-            prev.map((req) =>
-              req._id === id ? { ...req, status: newStatus } : req
-            )
-          );
+          
+          setStatus(newStatus);
         } catch (err) {
           alert(err.message || "Failed to update request");
         }
@@ -52,7 +50,7 @@ const ApprovedMemberList = () => {
     
     useEffect(() => {
         loadMembers();
-      }, []);
+      }, [status]);
     
       return (
         <div className="container mt-4">
@@ -75,11 +73,23 @@ const ApprovedMemberList = () => {
               <tbody>
                 {requests.map((req) => (
                   <tr key={req._id}>
-                    <td>{req.Enrollment_Number}</td>
-                    <td>{req.First_Name + " " + req.Surname}</td>
-                    <td>{req.Course}</td>
-                    <td>{req.Semester}</td>
-                    <td>{req.Mobile}</td>              
+                    <td>{req.enrollment_number}</td>
+                    <td>{req.firstName + " " + req.surname}</td>
+                    <td>{req.course}</td>
+                    <td>{req.semester}</td>
+                    <td>{req.mobile}</td>
+                    <td>
+                        <Form.Select
+                          size="sm"
+                          value={req.cardStatus}
+                          onChange={(e) =>
+                          handleStatusChange(req._id, e.target.value)
+                          }
+                        >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        </Form.Select>
+                        </td>            
                   </tr>
                 ))}
               </tbody>

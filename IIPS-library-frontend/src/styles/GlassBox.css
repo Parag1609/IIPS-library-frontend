@@ -1,0 +1,36 @@
+.glass-box {
+  background: rgba(255, 255, 255, 0.3); /* translucent white */
+  backdrop-filter: blur(10px); /* blur background */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  border-radius: 16px;
+  padding: 25px;
+  max-width: 600px;
+  margin: 30px auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.glass-box h5 {
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.glass-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.glass-tag {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}

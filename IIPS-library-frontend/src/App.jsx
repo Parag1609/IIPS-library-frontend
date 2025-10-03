@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
 
 // ✅ Import Pages
@@ -28,8 +30,9 @@ import BookList from "./pages/Catalogue/BookList";
 import Transaction from "./pages/Transaction/Transaction";
 import SearchBook from "./pages/Search Book/SearchBook";
 
+
 export default function App() {
-  return (
+  return (<>
     <Router>
       <Routes>
         {/* Home */}
@@ -60,5 +63,17 @@ export default function App() {
         <Route path="/search" element={<SearchBook />} />
       </Routes>
     </Router>
+    <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      /> </>
   );
 }

@@ -59,7 +59,9 @@ export const AddBook = async (bookData) =>{
 //Upload By CSV
 export const UploadByCSV = async (CSVdata) =>{
     try{
-        const res = await axiosClient.post(`/books/upload-csv`,CSVdata);
+        const res = await axiosClient.post(`/books/upload-csv`,CSVdata,{
+            headers: { "Content-Type": "multipart/form-data" },
+  });
         return res.data;
     }catch(error){
         console.error(`Error in Uploading`,error);

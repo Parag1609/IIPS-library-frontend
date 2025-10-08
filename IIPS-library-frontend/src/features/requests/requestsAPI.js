@@ -1,16 +1,13 @@
 import axiosClient from "../../api/axiosClient";
 
 //Get all member requests
-export const FetchRequests = async (filters = {}) =>{
-    try{
-        const query = new URLSearchParams(filters).toString();
-        const res = await axiosClient.get(`/membership-requests${query? `?${query}` : ""}`);
-        console.log(res);
-        return res.data;
-    }catch(error){
-        console.error(`Error in fetching requests`,error);
-        throw error;
-    }
+export const FetchRequests = async (queryString="") =>{
+    try {
+    const response = await axiosClient.get(`/membership-requests${queryString ? `?${queryString}` : ""}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 //Get member request by ID
@@ -67,7 +64,7 @@ export const SubmitRequest = async (RequestDetails) =>{
 //Approve request
 export const ApproveRequest = async (id) =>{
     try{
-        const res = await axiosClient.post(`/requests/${id}/approve`);
+        const res = await axiosClient.post(`/membership-requests/${id}/approve`);
         return res.data;
     }catch(error){
         console.error(`Error in approving request with ID:${id}`,error);
@@ -78,7 +75,7 @@ export const ApproveRequest = async (id) =>{
 //Reject request
 export const RejectRequest = async (id) =>{
     try{
-        const res = await axiosClient.post(`/requests/${id}/reject`);
+        const res = await axiosClient.post(`/membership-requests/${id}/reject`);
         return res.data;
     }catch(error){
         console.error(`Error in rejecting request with ID:${id}`,error);

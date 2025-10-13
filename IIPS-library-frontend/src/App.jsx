@@ -46,7 +46,7 @@ export default function App() {
         <Route path="/membership/form" element={<FormPage />} />
         <Route path="/membership/new" element={<NewMember />} />
         <Route path="/membership/search" element={<SearchMember />} />
-        <Route path="/membership/details/:name" element={<MemberDetails />} />
+        <Route path="/membership/details/:memberId" element={<MemberDetails />} />
         <Route path="/membership/requests" element={<MembershipRequestsTable />} />
         <Route path="/membership/approved-members" element={< ApprovedMemberList/>} />
 

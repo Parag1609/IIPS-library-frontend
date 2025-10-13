@@ -24,6 +24,17 @@ export const fetchMemberById = async (id) => {
   }
 };
 
+export const fetchMemberByMemberId = async (memberId) => {
+  try {
+    const res = await axiosClient.get(`/members/find`,{params:{memberId}});
+    return res.data;
+  } catch (error) {
+    console.error(`Error fetching member with ID ${memberId}:`, error);
+    throw error;
+  }
+};
+
+
 // Create a new member
 export const createMember = async (memberData) => {
   try {

@@ -101,3 +101,19 @@ export const returnBook = async (memberId, bookId) => {
   }
 };
 */
+export const DownloadCards = async (filters) => {
+  try {
+    const query = new URLSearchParams(filters).toString();
+    
+    // Important: Use responseType: 'blob' for PDF downloads
+    const res = await axiosClient.get(
+      `/members/cards/pdf${query ? `?${query}` : ""}`,
+      { responseType: 'blob' } // This is crucial for PDF downloads
+    );
+    
+    return res.data; // Returns blob
+  } catch (error) {
+    console.error('Error downloading barcodes:', error);
+    throw error;
+  }
+};

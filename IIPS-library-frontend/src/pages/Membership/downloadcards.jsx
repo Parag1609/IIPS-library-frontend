@@ -6,72 +6,14 @@ import { DownloadBarcodes } from "../../features/books/booksAPI";
 
 export default function DownloadCards() {
   const [memberId, setFromMemberId] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [surname, setSurname] = useState("");
+  const [search, setSearch] = useState("");
   const [enrollment_number, setEnrollmentNumber] = useState(false);
-  const [fullName, setFullName] = useState(false);
   const [error, setError] = useState("");
 
-  const handleDownload = async () => {
-    // Validation
-    if (!fromAccNo && !toAccNo && !authorName) {
-      toast.warning("Please enter at least one filter criteria");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      // Build filters object
-      const filters = {};
-      if (fromAccNo && fromAccNo.trim()) {
-        filters.fromAcc = fromAccNo.trim().toUpperCase();
-      }
-      if (toAccNo && toAccNo.trim()) {
-        filters.toAcc = toAccNo.trim().toUpperCase();
-      }
-      if (authorName && authorName.trim()) {
-        filters.author_name = authorName.trim();
-      }
-
-      console.log('Downloading with filters:', filters);
-
-      // Call API and get blob
-      const blob = await DownloadBarcodes(filters);
-
-      // Create download link
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `barcodes-${new Date().toISOString().split('T')[0]}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      toast.success("Barcodes downloaded successfully!");
-
-    } catch (err) {
-      console.error('Download error:', err);
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
-                          "Failed to download barcodes";
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+  const handleDownload = async () => { 
   };
 
   const clearFilters = () => {
-    setFromAccNo("");
-    setToAccNo("");
-    setAuthorName("");
-    setError("");
-    toast.info("Filters cleared");
   };
 
   return (

@@ -46,7 +46,7 @@ export default function CatalogueDownloadBarcodes() {
       link.setAttribute('download', `barcodes-${new Date().toISOString().split('T')[0]}.pdf`);
       document.body.appendChild(link);
       link.click();
-      
+
       // Cleanup
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
@@ -55,12 +55,31 @@ export default function CatalogueDownloadBarcodes() {
 
     } catch (err) {
       console.error('Download error:', err);
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
-                          "Failed to download barcodes";
+
+      let errorMessage = "Failed to download barcodes";
+
+      try {
+        // 🧠 If backend returned an error as a Blob (e.g. when responseType is 'blob')
+        if (err.response?.data instanceof Blob) {
+          const text = await err.response.data.text(); // convert blob to string
+          const json = JSON.parse(text);               // try to parse JSON
+          errorMessage = json.message || errorMessage;
+        } else {
+          // 🧩 Normal JSON error
+          errorMessage =
+            err.response?.data?.message ||
+            err.message ||
+            errorMessage;
+        }
+      } catch (parseErr) {
+        console.warn("Error parsing blob response:", parseErr);
+        errorMessage = err.message || errorMessage;
+      }
+
       setError(errorMessage);
       toast.error(errorMessage);
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   };
@@ -94,7 +113,7 @@ export default function CatalogueDownloadBarcodes() {
 
       <div className="library-card bg-light p-4 rounded shadow-sm">
         <h5 className="mb-4">Filter Options</h5>
-        
+
         <Form>
           <Row className="mb-3">
             <Col md={6}>
@@ -149,8 +168,8 @@ export default function CatalogueDownloadBarcodes() {
           </Row>
 
           <div className="d-flex gap-2">
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               onClick={handleDownload}
               disabled={loading || (!fromAccNo && !toAccNo && !authorName)}
             >
@@ -164,8 +183,8 @@ export default function CatalogueDownloadBarcodes() {
               )}
             </Button>
 
-            <Button 
-              variant="outline-secondary" 
+            <Button
+              variant="outline-secondary"
               onClick={clearFilters}
               disabled={loading}
             >

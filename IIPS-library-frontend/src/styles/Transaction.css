@@ -85,3 +85,67 @@
   cursor: pointer;
   font-weight: bold;
 }
+
+/* ============================= */
+/* ✅ Active Transactions Section */
+/* ============================= */
+
+.transaction-table-container {
+  background-color: rgba(255, 255, 255, 0.85); /* white with transparency */
+  border-radius: 15px;
+  padding: 20px 30px;
+  width: 85%;
+  max-width: 900px;
+  margin: 30px auto;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.transaction-table-container h2 {
+  color: #5a2e0d; /* rich brown */
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* ✅ Table Styling */
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #4b2a0a; /* dark brown font */
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 12px;
+  border: 1px solid rgba(90, 46, 13, 0.3);
+  text-align: center;
+}
+
+.transaction-table th {
+  background-color: rgba(90, 46, 13, 0.1); /* light brown tint */
+  font-weight: 600;
+}
+
+.transaction-table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.transaction-table tr:hover {
+  background-color: rgba(90, 46, 13, 0.15);
+  transition: 0.3s ease;
+}
+
+/* ✅ Make it responsive */
+@media (max-width: 768px) {
+  .transaction-table-container {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .transaction-table th,
+  .transaction-table td {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+}

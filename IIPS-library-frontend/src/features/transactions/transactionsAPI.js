@@ -36,13 +36,12 @@ export const IssueBook = async(Details) =>{
 };
 
 //Returning book
-export const ReturnBook = async(id,Details) =>{
-    try {
-    const res = await axiosClient.put(`/transactions/${id}`, Details);
+export const ReturnBook = async (returnDetails) => {
+  try {
+    const res = await axiosClient.patch(`/transactions/return`, returnDetails);
     return res.data;
   } catch (error) {
     console.error(`Error in returning book:`, error);
     throw error;
   }
 };
-

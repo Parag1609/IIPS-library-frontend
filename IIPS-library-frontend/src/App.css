@@ -33,7 +33,7 @@ html, body, #root {
   font-size: 2rem;
 }
 
-/* Buttons */
+
 .menu {
   display: flex;
   flex-direction: column;
@@ -46,9 +46,9 @@ html, body, #root {
 
 .menu button {
   display: block;
-  width: 250px;          /* 🔹 Fixed width */
-  height: 45px;          /* 🔹 Same height */
-  margin: 10px auto;     /* 🔹 Center + spacing */
+  width: 250px;          
+  height: 45px;          
+  margin: 10px auto;    
   background-color: #7b4b2a;
   color: white;
   font-size: 16px;
@@ -64,12 +64,12 @@ html, body, #root {
 }
 
 .menu a {
-  text-decoration: none;   /* remove underline */
-  color: inherit;          /* keep button text color */
+  text-decoration: none;   
+  color: inherit;          
 }
 
 .menu a:visited {
-  color: inherit;          /* prevent purple visited color */
+  color: inherit;          
 }
 
 
@@ -107,9 +107,9 @@ body {
   color: white;
   border: none;
   border-radius: 8px;
-}
+}/*
 .btn {
-  background-color: #8b5e3c; /* brown */
+  background-color: #8b5e3c; 
   color: white;
   padding: 10px 20px;
   margin: 10px 0;
@@ -123,7 +123,7 @@ body {
 .btn:hover {
   background-color: #6b4226;
 }
-
+*/
 .search-bar {
   background-color:rgba(139, 94, 60, 0.9); /* 🔥 Brown background */
   border: 2px solid #000;

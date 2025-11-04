@@ -24,7 +24,7 @@ export const fetchBookById = async (id) =>{
 };
 
 //update book details
-export const UpdateBookDetails = async (id,updatedetails) =>{
+export const updateBook = async (id,updatedetails) =>{
     try{
         const res = await axiosClient.put(`/books/${id}`,updatedetails);
         return res.data;
@@ -35,7 +35,7 @@ export const UpdateBookDetails = async (id,updatedetails) =>{
 };
 
 //Delete book
-export const DeleteBook = async (id) =>{
+export const deleteBook = async (id) =>{
     try{
         const res = await axiosClient.delete(`/books/${id}`);
         return res.data;
@@ -76,9 +76,8 @@ export const DownloadBarcodes = async (filters) => {
     // Important: Use responseType: 'blob' for PDF downloads
     const res = await axiosClient.get(
       `/books/barcodes/pdf${query ? `?${query}` : ""}`,
-      { responseType: 'blob' } // This is crucial for PDF downloads
-    );
-    
+      { responseType: 'blob' }
+    );   
     return res.data; // Returns blob
   } catch (error) {
     console.error('Error downloading barcodes:', error);

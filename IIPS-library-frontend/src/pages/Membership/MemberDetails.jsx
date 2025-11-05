@@ -132,7 +132,7 @@ export default function MemberDetails() {
   }, [memberId]);
 
   const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete member ${member?.memberId}?`)) {
+    if (window.confirm(`Are you sure you want to delete member ${member?.membershipId}?`)) {
       // TODO: Implement delete API call
       toast.success("Delete feature coming soon!");
     }
@@ -209,14 +209,15 @@ export default function MemberDetails() {
 
         <div className="card-content">
           <div className="card-left">
-            <p><strong>Name:</strong> {member.firstName} {member.surame}</p>
-            <p><strong>Member ID:</strong> {member.memberId}</p>
-            <p><strong>Enrollment No:</strong> {member.enrollment_number}</p>
-            <p><strong>Course:</strong> {member.course} - Semester {member.semester}</p>
+            <p><strong>Name:</strong> {member.name}</p>
+            <p><strong>Member Type:</strong> {member.memberType}</p>
+            <p><strong>Membership ID:</strong> {member.membershipId}</p>
+            <p><strong>Member No:</strong> {member.memberNumber}</p>
+            <p><strong>Course:</strong> {member.course || "NA"}</p>
             <p><strong>Mobile:</strong> {member.mobile}</p>
 
             <div className="barcode-row">
-              <span className="barcode">Member ID: {member.memberId}</span>
+              <span className="barcode">Member ID: {member.membershipId}</span>
               {/* You can add actual barcode rendering here */}
             </div>
           </div>
@@ -257,7 +258,7 @@ export default function MemberDetails() {
               <th style={{ width: '30%' }}>No. of books issued:</th>
               <td>
                 <Badge bg={member.activeIssuedCount > 0 ? 'warning' : 'success'}>
-                  {member.activeIssuedCount || 0} / {member.maxBooksAllowed || 3}
+                  {member.issuedBooks.length || 0} / {member.bookIssueLimit || 3}
                 </Badge>
                 {member.canIssueMore ? (
                   <span className="text-success ms-2">✓ Can issue more books</span>

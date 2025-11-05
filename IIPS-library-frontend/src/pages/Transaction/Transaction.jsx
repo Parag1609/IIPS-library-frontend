@@ -9,7 +9,7 @@ import "./../../styles/Transaction.css";
 
 export default function Transaction() {
   const [accessionNumber, setAccessionNumber] = useState("");
-  const [memberId, setMemberId] = useState("");
+  const [membershipId, setMembershipId] = useState("");
 
   // State for fetched data
   const [member, setMember] = useState(null);
@@ -25,7 +25,7 @@ export default function Transaction() {
   const [transactionType, setTransactionType] = useState(null); // 'issue', 'return', 'already_issued'
 
   const handleSearch = async () => {
-    if (!accessionNumber.trim() || !memberId.trim()) {
+    if (!accessionNumber.trim() || !membershipId.trim()) {
       toast.warning("Please enter both Accession Number and Member ID");
       return;
     }
@@ -39,7 +39,7 @@ export default function Transaction() {
 
     try {
       // Fetch member details
-      const memberData = await fetchMemberByMemberId(memberId.trim());
+      const memberData = await fetchMemberByMemberId(membershipId.trim());
       if (!memberData.success) {
         throw new Error("Member not found");
       }
@@ -111,7 +111,7 @@ export default function Transaction() {
     setLoading(true);
     try {
       const issueDetails = {
-        memberId: member.memberId,
+        memberId: member.membershipId,
         bookId: book.accession_number
       };
 
@@ -141,7 +141,7 @@ export default function Transaction() {
 const handleReturnBook = async () => {
   setLoading(true);
   try {
-    const returnDetails= { memberId : member.memberId, bookId: book.accession_number}
+    const returnDetails= { memberId : member.membershipId, bookId: book.accession_number}
     const result = await ReturnBook(returnDetails);
     
     if (result.success) {
@@ -212,8 +212,8 @@ const handleReturnBook = async () => {
                 type="text"
                 className="form-control"
                 placeholder="Scan or enter member ID..."
-                value={memberId}
-                onChange={(e) => setMemberId(e.target.value)}
+                value={membershipId}
+                onChange={(e) => setMembershipId(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={searching || loading}
               />
@@ -223,7 +223,7 @@ const handleReturnBook = async () => {
                 variant="primary"
                 className="w-100"
                 onClick={handleSearch}
-                disabled={searching || loading || !accessionNumber.trim() || !memberId.trim()}
+                disabled={searching || loading || !accessionNumber.trim() || !membershipId.trim()}
               >
                 {searching ? (
                   <>
@@ -264,19 +264,23 @@ const handleReturnBook = async () => {
               <tbody>
                 <tr>
                   <th style={{ width: '30%' }}>Member ID</th>
-                  <td><strong className="text-primary">{member.memberId}</strong></td>
+                  <td><strong className="text-primary">{member.membershipId}</strong></td>
+                </tr>
+                <tr>
+                  <th>Member Type</th>
+                  <td>{member.memberType}</td>
                 </tr>
                 <tr>
                   <th>Name</th>
-                  <td>{member.firstName} {member.surname || member.lastName}</td>
+                  <td>{member.name}</td>
                 </tr>
                 <tr>
-                  <th>Enrollment Number</th>
-                  <td>{member.enrollment_number}</td>
+                  <th>Member Number</th>
+                  <td>{member.memberNumber}</td>
                 </tr>
                 <tr>
-                  <th>Course & Semester</th>
-                  <td>{member.course} - Semester {member.semester}</td>
+                  <th>Course</th>
+                  <td>{member.course} || NA</td>
                 </tr>
                 <tr>
                   <th>Mobile</th>

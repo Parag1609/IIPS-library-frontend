@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+/*import React, { useEffect, useState } from "react";
 import { Table, Form, Spinner, Alert, Row, Col, Button, Badge } from "react-bootstrap";
 import { toast } from "react-toastify";
 import {
@@ -172,7 +172,7 @@ const ApprovedMemberList = () => {
         </Button>
       </div>
 
-      {/* Filters Section */}
+      
       <div className="bg-light p-3 rounded mb-4">
         <h5 className="mb-3">Filters</h5>
         <Row className="g-3">
@@ -246,7 +246,7 @@ const ApprovedMemberList = () => {
         </div>
       </div>
 
-      {/* Loading and Error States */}
+     
       {loading && (
         <div className="text-center py-4">
           <Spinner animation="border" />
@@ -256,7 +256,7 @@ const ApprovedMemberList = () => {
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Table */}
+    
       {!loading && !error && (
         <>
           {members.length === 0 ? (
@@ -310,7 +310,7 @@ const ApprovedMemberList = () => {
             </Table>
           )}
 
-          {/* Summary */}
+      
           {members.length > 0 && (
             <div className="bg-light p-3 rounded">
               <Row>
@@ -324,6 +324,340 @@ const ApprovedMemberList = () => {
                 <Col md={4}>
                   <strong>Inactive:</strong>{" "}
                   {members.filter(m => m.cardStatus === 'inactive').length}
+                </Col>
+              </Row>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default ApprovedMemberList;
+*/
+import React, { useEffect, useState } from "react";
+import { Table, Form, Spinner, Alert, Row, Col, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
+import {
+  fetchMembers,
+  updateCardStatus,
+  DownloadCards
+} from "../../features/members/membersAPI";
+
+const ApprovedMemberList = () => {
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [downloadLoading, setDownloadLoading] = useState(false);
+
+  // Filters
+  const [filters, setFilters] = useState({
+    search: "",
+    cardStatus: "all",
+    course: "all",
+    memberType: "all"
+  });
+
+  // Pagination (optional)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalMembers, setTotalMembers] = useState(0);
+
+  // Badge style
+  const getStatusStyle = (status) => {
+    const styles = {
+      active: {
+        backgroundColor: "#28a745",
+        color: "#fff",
+        fontWeight: "500"
+      },
+      inactive: {
+        backgroundColor: "#dc3545",
+        color: "#fff",
+        fontWeight: "500"
+      }
+    };
+    return styles[status] || {};
+  };
+
+  // Load members
+  const loadMembers = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value && value !== "all") {
+          queryParams.append(key, value);
+        }
+      });
+
+      const data = await fetchMembers(queryParams.toString());
+      setMembers(data.data || []);
+      setTotalMembers(data.totalMembers || data.data?.length || 0);
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+      toast.error(err.message || "Failed to load members");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle card status change
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await updateCardStatus(id, newStatus);
+      setMembers((prev) =>
+        prev.map((member) =>
+          member._id === id ? { ...member, cardStatus: newStatus } : member
+        )
+      );
+      toast.success(`Card status updated to ${newStatus}`);
+    } catch (err) {
+      console.log(err)
+      toast.error(err?.response?.data?.message || "Failed to update status");
+    }
+  };
+
+  // Handle filter change
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setFilters({
+      search: "",
+      cardStatus: "all",
+      course: "all",
+      memberType: "all"
+    });
+  };
+
+  // Download cards
+  const handleDownloadCards = async () => {
+    setDownloadLoading(true);
+    try {
+      const downloadFilters = {};
+      if (filters.course && filters.course !== "all") {
+        downloadFilters.course = filters.course;
+      }
+      if (filters.cardStatus && filters.cardStatus !== "all") {
+        downloadFilters.cardStatus = filters.cardStatus;
+      }
+      if (filters.memberType && filters.memberType !== "all") {
+        downloadFilters.memberType = filters.memberType;
+      }
+      if (filters.search && filters.search.trim()) {
+        downloadFilters.search = filters.search.trim();
+      }
+
+      const blob = await DownloadCards(downloadFilters);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `library-cards-${new Date().toISOString().split("T")[0]}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Library cards downloaded successfully!");
+    } catch (err) {
+      console.error("Download error:", err);
+      toast.error(err.message || "Failed to download library cards");
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
+  // Debounced load
+  useEffect(() => {
+    const timeout = setTimeout(() => loadMembers(), 500);
+    return () => clearTimeout(timeout);
+  }, [filters]);
+
+  return (
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Approved Member List</h2>
+        <Button
+          variant="success"
+          onClick={handleDownloadCards}
+          disabled={downloadLoading || members.length === 0}
+        >
+          {downloadLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />
+              Downloading...
+            </>
+          ) : (
+            "📥 Download Cards PDF"
+          )}
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-light p-3 rounded mb-4">
+        <h5 className="mb-3">Filters</h5>
+        <Row className="g-3">
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Search</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Name, ID, Mobile..."
+                value={filters.search}
+                onChange={(e) =>
+                  handleFilterChange("search", e.target.value)
+                }
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Card Status</Form.Label>
+              <Form.Select
+                value={filters.cardStatus}
+                onChange={(e) =>
+                  handleFilterChange("cardStatus", e.target.value)
+                }
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Course</Form.Label>
+              <Form.Select
+                value={filters.course}
+                onChange={(e) =>
+                  handleFilterChange("course", e.target.value)
+                }
+              >
+                <option value="all">All Courses</option>
+                <option value="BTECH">BTECH</option>
+                <option value="MTECH">MTECH</option>
+                <option value="MCA">MCA</option>
+                <option value="MBA">MBA</option>
+                <option value="MSC">MSC</option>
+                <option value="PHD">PHD</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Member Type</Form.Label>
+              <Form.Select
+                value={filters.memberType}
+                onChange={(e) =>
+                  handleFilterChange("memberType", e.target.value)
+                }
+              >
+                <option value="all">All Types</option>
+                <option value="student">Student</option>
+                <option value="faculty">Faculty</option>
+                <option value="special">Special</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <div className="mt-3 d-flex justify-content-between align-items-center">
+          <Button variant="secondary" size="sm" onClick={resetFilters}>
+            Reset Filters
+          </Button>
+          <small className="text-muted">
+            Showing {members.length} member(s)
+          </small>
+        </div>
+      </div>
+
+      {/* Loading and Errors */}
+      {loading && (
+        <div className="text-center py-4">
+          <Spinner animation="border" />
+          <p className="mt-2">Loading members...</p>
+        </div>
+      )}
+      {error && <Alert variant="danger">{error}</Alert>}
+
+      {/* Table */}
+      {!loading && !error && (
+        <>
+          {members.length === 0 ? (
+            <Alert variant="info">
+              No members found. Try adjusting your filters.
+            </Alert>
+          ) : (
+            <Table striped bordered hover responsive>
+              <thead className="table-dark">
+                <tr>
+                  <th>Membership ID</th>
+                  <th>Member Number</th>
+                  <th>Name</th>
+                  <th>Member Type</th>
+                  <th>Course</th>
+                  <th>Mobile</th>
+                  <th>Card Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {members.map((member) => (
+                  <tr key={member._id}>
+                    <td>
+                      <strong className="text-primary">
+                        {member.membershipId}
+                      </strong>
+                    </td>
+                    <td>{member.memberNumber}</td>
+                    <td>{member.name}</td>
+                    <td>{member.memberType}</td>
+                    <td>{member.course || "-"}</td>
+                    <td>{member.mobile}</td>
+                    <td>
+                      <Form.Select
+                        size="sm"
+                        value={member.cardStatus}
+                        onChange={(e) =>
+                          handleStatusChange(member._id, e.target.value)
+                        }
+                        style={getStatusStyle(member.cardStatus)}
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </Form.Select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+
+          {/* Summary */}
+          {members.length > 0 && (
+            <div className="bg-light p-3 rounded">
+              <Row>
+                <Col md={4}>
+                  <strong>Total Members:</strong> {members.length}
+                </Col>
+                <Col md={4}>
+                  <strong>Active:</strong>{" "}
+                  {members.filter((m) => m.cardStatus === "active").length}
+                </Col>
+                <Col md={4}>
+                  <strong>Inactive:</strong>{" "}
+                  {members.filter((m) => m.cardStatus === "inactive").length}
                 </Col>
               </Row>
             </div>

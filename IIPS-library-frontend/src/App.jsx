@@ -13,7 +13,7 @@ import AddMembershipRequest from "./pages/Membership/AddMembershipRequest";
 import UploadCSV from "./pages/Membership/UploadCSV";
 import UploadExcel from "./pages/Membership/UploadExcel";
 import FormPage from "./pages/Membership/FormPage";
-import NewMember from "./pages/Membership/NewMember";
+import AddMember from "./pages/Membership/AddMember";
 import SearchMember from "./pages/Membership/SearchMember";
 import MemberDetails from "./pages/Membership/MemberDetails";
 import MembershipRequestsTable from "./pages/Membership/MembershipRequestsTable";
@@ -44,7 +44,7 @@ export default function App() {
         <Route path="/membership/uploadcsv" element={<UploadCSV />} />
         <Route path="/membership/uploadexcel" element={<UploadExcel />} />
         <Route path="/membership/form" element={<FormPage />} />
-        <Route path="/membership/new" element={<NewMember />} />
+        <Route path="/membership/new" element={<AddMember />} />
         <Route path="/membership/search" element={<SearchMember />} />
         <Route path="/membership/details/:memberId" element={<MemberDetails />} />
         <Route path="/membership/requests" element={<MembershipRequestsTable />} />

@@ -250,7 +250,7 @@ const handleReturnBook = async () => {
           {error}
         </Alert>
       )}
-
+      <div className="transaction-result">
       {/* Member Details */}
       {member && (
         <Card className="mb-4">
@@ -354,6 +354,7 @@ const handleReturnBook = async () => {
           </Card.Body>
         </Card>
       )}
+      </div>
 
       {/* Transaction Actions */}
       {transactionType && (

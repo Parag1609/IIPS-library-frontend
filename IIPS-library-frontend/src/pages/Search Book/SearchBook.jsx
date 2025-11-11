@@ -235,7 +235,6 @@ function SearchBook() {
           ) : (
             <>
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4>Search Results</h4>
                 <Badge bg="primary" className="fs-6">
                   Page {currentPage} of {totalPages} ({totalBooks} total books)
                 </Badge>

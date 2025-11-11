@@ -691,13 +691,10 @@ const BookList = () => {
   const statusCounts = getStatusCounts();
 
   return (
+    <div className="page">
+      <h1 className="title" >Membership Requests</h1>
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>List of Books</h2>
-        <Link to="/catalogue">
-          <Button variant="secondary">⬅ Back to Catalogue</Button>
-        </Link>
-      </div>
+      <div className="tableBox">
 
       {/* Filters Section */}
       <div className="bg-light p-3 rounded mb-4">
@@ -1077,6 +1074,8 @@ const BookList = () => {
           </Modal.Footer>
         </Form>
       </Modal>
+      </div>
+    </div>
     </div>
   );
 };

@@ -36,6 +36,7 @@ const Login = () => {
   };
 
   return (
+    <div className="page">
     <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
       <div className="card shadow" style={{ width: '100%', maxWidth: '400px' }}>
         <div className="card-body p-4">
@@ -82,6 +83,7 @@ const Login = () => {
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 };

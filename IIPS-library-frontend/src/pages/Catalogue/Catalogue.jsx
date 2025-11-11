@@ -8,7 +8,6 @@ export default function Catalogue() {
       </div>
       <div className="menu">
         <Link to="/catalogue/uploadcsv"><button>Upload CSV</button></Link>
-        <Link to="/catalogue/uploadexcel"><button>Upload Excel</button></Link>
         <Link to="/catalogue/form"><button>Form</button></Link>
         <Link to="/catalogue/downloadbarcodes"><button>Download Barcodes</button></Link>
         <Link to="/catalogue/booklist"><button>List of Books</button></Link>

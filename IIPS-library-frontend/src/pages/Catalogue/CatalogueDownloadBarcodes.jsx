@@ -94,17 +94,7 @@ export default function CatalogueDownloadBarcodes() {
 
   return (
     <div className="page">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Download Barcodes</h1>
-        <Link to="/catalogue">
-          <Button variant="secondary">⬅ Back</Button>
-        </Link>
-      </div>
-
-      <p className="text-muted mb-4">
-        Download barcodes for books in PDF format. Use filters to specify which books to include.
-      </p>
-
+      <h1>Download Barcodes</h1>
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError("")}>
           {error}

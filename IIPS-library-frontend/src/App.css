@@ -91,7 +91,9 @@ body {
 }
 
 .page {
+  background: url("/public/lib_bg.jpeg") no-repeat center center/cover;
   background-size: cover;
+  background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -164,7 +166,7 @@ body {
   -webkit-backdrop-filter: blur(10px); /* Safari support */
   border-radius: 16px;
   padding: 25px;
-  width:100%;
+  width:90%;
   margin: 30px auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);

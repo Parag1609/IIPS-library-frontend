@@ -69,24 +69,8 @@ export default function CatalogueUploadCSV() {
   return (
     <div className="page">
       <h1>Upload CSV</h1>
-      <p>Here you can upload CSV files for Adding Books</p>
 
       {err && <Alert variant="danger" dismissible onClose={() => setErr("")}>{err}</Alert>}
-
-      <Button 
-        onClick={() => setShow(true)} 
-        className="mb-3"
-        disabled={loading}
-      >
-        {loading ? (
-          <>
-            <Spinner animation="border" size="sm" className="me-2" />
-            Uploading...
-          </>
-        ) : (
-          "Upload Books CSV"
-        )}
-      </Button>
 
       <div className="glass-box">
         <h5>Required CSV Headers</h5>
@@ -112,6 +96,22 @@ ACC001,Introduction to Algorithms,Thomas H. Cormen,3rd,MIT Press,1312,3500,ABC B
 ACC002,Clean Code,Robert C. Martin,1st,Prentice Hall,464,2800,XYZ Publishers,BILL002`}
           </pre>
         </details>
+        <div class="d-flex justify-content-center align-items-center">
+         <Button 
+        onClick={() => setShow(true)} 
+        className="mb-3"
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <Spinner animation="border" size="sm" className="me-2" />
+            Uploading...
+          </>
+        ) : (
+          "Upload Books CSV"
+        )}
+      </Button>
+      </div>
       </div>
 
       <UploadModal
@@ -122,12 +122,6 @@ ACC002,Clean Code,Robert C. Martin,1st,Prentice Hall,464,2800,XYZ Publishers,BIL
         onUpload={handleCSVUpload}
         err={err}
       />
-
-      <Link to="/catalogue">
-        <Button variant="secondary" className="mt-3">
-          ⬅ Back
-        </Button>
-      </Link>
     </div>
   );
 }

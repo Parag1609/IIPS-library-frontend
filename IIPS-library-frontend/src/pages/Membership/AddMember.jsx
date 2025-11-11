@@ -84,9 +84,9 @@ const AddMember = () => {
   }
 
   return (
-    <div>
+    <div className='page'>
       <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="title">Approved Member List</h1>
+          <h1 className="title">New Member Form</h1>
       </div>
     <div className="container mt-4">
       <Card>

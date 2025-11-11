@@ -482,7 +482,7 @@ const ApprovedMemberList = () => {
   }, [filters]);
 
   return (
-    <div >
+    <div className="page" >
       <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className="title">Approved Member List</h1>
       </div>

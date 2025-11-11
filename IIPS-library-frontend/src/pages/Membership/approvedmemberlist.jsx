@@ -482,10 +482,10 @@ const ApprovedMemberList = () => {
   }, [filters]);
 
   return (
-    <div className="container mt-4">
+    <div className="">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Approved Member List</h2>
-        <Button
+          <h1 className="title">Approved Member List</h1>
+          <Button
           variant="success"
           onClick={handleDownloadCards}
           disabled={downloadLoading || members.length === 0}

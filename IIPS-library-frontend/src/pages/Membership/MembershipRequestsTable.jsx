@@ -165,7 +165,7 @@ const MembershipRequestsTable = () => {
 
   return (
     <div className="container-fluid mt-4">
-      <h2 className="mb-4">Membership Requests</h2>
+      <h1 className="title">Membership Requests</h1>
 
       {/* Filters Section */}
       <div className="bg-light p-3 rounded mb-4 shadow-sm">

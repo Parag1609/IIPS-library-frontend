@@ -1,5 +1,5 @@
 .transaction-container {
-  background: url("/library-bg.jpg") no-repeat center center/cover;
+  background: url("/public/lib_bg.jpg") no-repeat center center/cover;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

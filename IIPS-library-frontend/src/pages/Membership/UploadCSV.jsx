@@ -247,28 +247,12 @@ export default function UploadCSV() {
   return (
     <div className="page">
       <h1>Upload CSV</h1>
-      <p>Here you can upload CSV files for membership requests.</p>
 
       {err && (
         <Alert variant="danger" dismissible onClose={() => setErr("")}>
           {err}
         </Alert>
       )}
-
-      <Button 
-        onClick={() => setShow(true)} 
-        className="mb-3"
-        disabled={loading}
-      >
-        {loading ? (
-          <>
-            <Spinner animation="border" size="sm" className="me-2" />
-            Uploading...
-          </>
-        ) : (
-          "Upload Membership CSV"
-        )}
-      </Button>
 
       <div className="glass-box">
         <h5>Required CSV Headers</h5>
@@ -304,7 +288,22 @@ CS2024002,Avni Sodhiya,Ajay Kumar Sodhiya,2024,Computer Science,9713713001,avni@
             <li><code>email</code> is optional but must be valid if provided</li>
             <li>Photo & receipt should be publicly accessible URLs or will be uploaded separately</li>
           </ul>
-        </div>
+        </div><div class="d-flex justify-content-center">
+        <Button 
+        onClick={() => setShow(true)} 
+        className="upload-btn"
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <Spinner animation="border" size="sm" className="me-2" />
+            Uploading...
+          </>
+        ) : (
+          "Upload Membership CSV"
+        )}
+      </Button>
+      </div>
       </div>
 
       <UploadModal
@@ -315,12 +314,8 @@ CS2024002,Avni Sodhiya,Ajay Kumar Sodhiya,2024,Computer Science,9713713001,avni@
         onUpload={handleCSVUpload}
         err={err}
       />
-
-      <Link to="/membership/add-request">
-        <Button variant="secondary" className="mt-3" disabled={loading}>
-          ⬅ Back
-        </Button>
-      </Link>
+      
     </div>
+    
   );
 }

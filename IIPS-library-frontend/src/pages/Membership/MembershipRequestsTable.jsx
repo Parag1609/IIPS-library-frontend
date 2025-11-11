@@ -164,10 +164,11 @@ const MembershipRequestsTable = () => {
   }
 
   return (
-    <div className="container-fluid mt-4">
-      <h1 className="title">Membership Requests</h1>
+    <div>
+      <h1 className="title" >Membership Requests</h1>
 
       {/* Filters Section */}
+      <div className="tableBox">
       <div className="bg-light p-3 rounded mb-4 shadow-sm">
         <h5 className="mb-3">
           <i className="bi bi-funnel me-2"></i>Filters
@@ -494,6 +495,7 @@ const MembershipRequestsTable = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+    </div>
     </div>
   );
 };

@@ -84,11 +84,12 @@ const AddMember = () => {
   }
 
   return (
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+          <h1 className="title">Approved Member List</h1>
+      </div>
     <div className="container mt-4">
       <Card>
-        <Card.Header>
-          <h3>Add New Member</h3>
-        </Card.Header>
         <Card.Body>
           <div className="mb-4">
             <h5>Select Member Type</h5>
@@ -295,6 +296,7 @@ const AddMember = () => {
           </Form>
         </Card.Body>
       </Card>
+    </div>
     </div>
   );
 };

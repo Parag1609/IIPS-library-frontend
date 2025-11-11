@@ -482,26 +482,13 @@ const ApprovedMemberList = () => {
   }, [filters]);
 
   return (
-    <div className="">
+    <div >
       <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className="title">Approved Member List</h1>
-          <Button
-          variant="success"
-          onClick={handleDownloadCards}
-          disabled={downloadLoading || members.length === 0}
-        >
-          {downloadLoading ? (
-            <>
-              <Spinner animation="border" size="sm" className="me-2" />
-              Downloading...
-            </>
-          ) : (
-            "📥 Download Cards PDF"
-          )}
-        </Button>
       </div>
 
       {/* Filters */}
+      <div className="tableBox">
       <div className="bg-light p-3 rounded mb-4">
         <h5 className="mb-3">Filters</h5>
         <Row className="g-3">
@@ -664,6 +651,23 @@ const ApprovedMemberList = () => {
           )}
         </>
       )}
+      </div>
+      <div class="d-flex justify-content-center">
+       <Button
+          variant="success"
+          onClick={handleDownloadCards}
+          disabled={downloadLoading || members.length === 0}
+        >
+          {downloadLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />
+              Downloading...
+            </>
+          ) : (
+            "📥 Download Cards PDF"
+          )}
+        </Button>
+        </div>
     </div>
   );
 };

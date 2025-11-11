@@ -64,12 +64,6 @@ export default function SearchMember() {
           {loading ? <Spinner animation="border" size="sm" /> : "Search"}
         </button>
       </div>
-
-      <div style={{ marginTop: "20px" }}>
-        <Link to="/membership">
-          <button>⬅ Back</button>
-        </Link>
-      </div>
     </div>
   );
 }

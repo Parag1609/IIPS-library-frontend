@@ -181,12 +181,10 @@ const handleReturnBook = async () => {
   };
 
   return (
+
     <div className="transaction-container">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1 className="transaction-title">Book Transaction</h1>
-        <Link to="/">
-          <Button variant="secondary">⬅ Back</Button>
-        </Link>
       </div>
 
       {/* Search Section */}

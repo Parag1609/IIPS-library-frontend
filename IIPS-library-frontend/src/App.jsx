@@ -33,6 +33,7 @@ import Login from './pages/Login/Login';
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 import ChangePassword from './pages/Login/ChangePassword';
+import ReportsApp from './pages/Reports/ReportsApp';
 
 /*
 export default function App() {
@@ -257,6 +258,14 @@ export default function App() {
               </ProtectedRoute>
             } 
           />
+
+          <Route 
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <ReportsApp/>
+              </ProtectedRoute>
+            }/>
 
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -37,7 +37,7 @@ const Login = () => {
 
   return (
     <div className="page">
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div className="min-vh-100 d-flex align-items-center justify-content-center page">
       <div className="card shadow" style={{ width: '100%', maxWidth: '400px' }}>
         <div className="card-body p-4">
           <h2 className="card-title text-center mb-4">Admin Login</h2>
@@ -80,11 +80,15 @@ const Login = () => {
                 Forgot Password?
               </Link>
             </div>
+            
           </form>
+          
         </div>
       </div>
+      
     </div>
     </div>
+    
   );
 };
 

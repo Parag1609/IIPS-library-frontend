@@ -12,6 +12,7 @@ export default function Home() {
         <Link to="/transaction"><button>Transaction</button></Link>
         <Link to="/catalogue"><button>Catalogue</button></Link>
         <Link to="/search"><button>Search Book</button></Link>
+        <Link to="/login"><button>⬅ Log out</button></Link>
       </div>
     </div>
   );

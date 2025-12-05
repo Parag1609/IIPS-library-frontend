@@ -1,8 +1,76 @@
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from "recharts";
+import {
+  Calendar, Book, Users, TrendingUp, FileText,
+  DollarSign, AlertCircle, CheckCircle, Clock, Download
+} from "lucide-react";
+import {
+  getDashboardStats,
+  getMostIssuedBooks,
+  getBooksByStatus,
+  getLostBooksReport,
+  getWriteOffBooksReport,
+  getMembersByType,
+  getMembersByCourse,
+  getMembersByYear,
+  getInactiveMembersReport,
+  getDailyTransactions,
+  getWeeklyTransactions,
+  getMonthlyTransactions,
+  getCustomRangeTransactions,
+  getBookValueReport
+} from "../../features/reports/reportsApi";
+
+// Helper function to consolidate daily breakdown data for the Line Chart
+const formatDailyBreakdown = (data) => {
+    if (!data || !data.issued || !data.returned) return [];
+
+    const issuedMap = new Map(data.issued.map(d => [d._id, d.count]));
+    const returnedMap = new Map(data.returned.map(d => [d._id, d.count]));
+
+    const allDates = [...new Set([...issuedMap.keys(), ...returnedMap.keys()])].sort();
+
+    return allDates.map(date => ({
+        date: String(date).includes('-') ? date : `Day ${date}`, // Handle "Day 1" from monthly report
+        Issued: issuedMap.get(date) || 0,
+        Returned: returnedMap.get(date) || 0,
+    }));
+};
+
+// Helper function for custom range statistics
+const formatCustomDailyBreakdown = (statistics) => {
+    if (!statistics || !statistics.dailyIssued || !statistics.dailyReturned) return [];
+
+    const issuedMap = new Map(statistics.dailyIssued.map(d => [d._id, d.count]));
+    const returnedMap = new Map(statistics.dailyReturned.map(d => [d._id, d.count]));
+
+    const allDates = [...new Set([...issuedMap.keys(), ...returnedMap.keys()])].sort();
+
+    return allDates.map(date => ({
+        date,
+        Issued: issuedMap.get(date) || 0,
+        Returned: returnedMap.get(date) || 0,
+    }));
+};
+
+
 const ReportsApp = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
-  const [reportData, setReportData] = useState(null);
+  
+  const [transactionReportData, setTransactionReportData] = useState(null);
+  const [bookReportData, setBookReportData] = useState(null);
+  const [memberReportData, setMemberReportData] = useState(null);
+  const [financialReportData, setFinancialReportData] = useState(null);
+
+  // LIFTED STATES for persistence across tab changes
+  const [transactionReportType, setTransactionReportType] = useState("daily");
+  const [bookReportType, setBookReportType] = useState("most-issued");
+  const [memberReportType, setMemberReportType] = useState("by-type");
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -14,36 +82,29 @@ const ReportsApp = () => {
 
   const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
+  // Initial dashboard load and state cleanup on tab change
   useEffect(() => {
-    if (activeTab === "dashboard") {
-      (async () => {
-        setLoading(true);
-        try {
-          const data = await getDashboardStats();
-          setDashboardData(data.data);
-        } catch (err) {
-          console.error("Dashboard load failed:", err);
-        } finally {
-          setLoading(false);
-        }
-      })();
-    }
-    console.log(activeTab,"act");
-  }, [activeTab]);
+    const loadDashboard = async () => {
+      setLoading(true);
+      try {
+        const data = await getDashboardStats();
+        setDashboardData(data.data);
+      } catch (err) {
+        console.error("Dashboard load failed:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Memoize handleFetchReport to prevent recreating on every render
-  const handleFetchReport = useCallback(async (fetchFn, ...params) => {
-    setLoading(true);
-    try {
-      const response =await fetchFn(...params);
-      setReportData(response.data);
-    } catch (err) {
-      console.error("Error fetching report:", err);
-    } finally {
-      setLoading(false);
-      console.log(reportData,"reportdata")
+    if (activeTab === "dashboard") {
+      loadDashboard();
+    } else {
+      setTransactionReportData(null); 
+      setBookReportData(null);
+      setMemberReportData(null);
+      setFinancialReportData(null);
     }
-  }, []);
+  }, [activeTab]);
 
   const StatCard = ({ icon: Icon, title, value, subtitle, color, gradient }) => (
     <div className={`relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 ${gradient}`}>
@@ -182,35 +243,69 @@ const ReportsApp = () => {
     );
   };
 
-  const TransactionReportsView = () => {
-    const [reportType, setReportType] = useState("daily");
-    useEffect(() => {
-     console.log("Effect running");
+  // Destructure reportType and setReportType from props
+  const TransactionReportsView = ({ reportType, setReportType }) => {
+    
+    // Derived state for chart data
+    let chartData = [];
+    if (transactionReportData) {
+        if (reportType === 'daily') {
+            // Daily report doesn't have a time series chart, only counts/lists
+        } else if (reportType === 'custom' && transactionReportData.statistics) {
+            chartData = formatCustomDailyBreakdown(transactionReportData.statistics);
+        } else if ((reportType === 'weekly' || reportType === 'monthly') && transactionReportData.dailyBreakdown) {
+            chartData = formatDailyBreakdown(transactionReportData.dailyBreakdown);
+        }
+    }
 
-  return () => {
-    setReportData(null);
-    console.log("Cleanup when component unmounts or before re-run");
-  };
-}, []);
+    // Clear data only when report type changes, not on input changes
+    const handleReportTypeChange = (newType) => {
+      setReportType(newType); // Uses prop setter
+      setTransactionReportData(null);
+    };
 
+    const generateReport = async () => {
+      setLoading(true);
+      try {
+        let response;
+        switch (reportType) {
+          case "daily":
+            response = await getDailyTransactions(selectedDate);
+            break;
+          case "weekly":
+            response = await getWeeklyTransactions(selectedDate);
+            break;
+          case "monthly":
+            // Call API
+            response = await getMonthlyTransactions(selectedYear, selectedMonth);
+            
+            // Map backend response structure to fit frontend card view
+            if (response.data.totalIssued && response.data.totalReturned) {
+                 const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+                 response.data.averages = {
+                    issuedPerDay: (response.data.totalIssued / daysInMonth).toFixed(2),
+                    returnedPerDay: (response.data.totalReturned / daysInMonth).toFixed(2)
+                 };
+            }
+            response.data.issued = { count: response.data.totalIssued };
+            response.data.returned = { count: response.data.totalReturned };
 
-    const generateReport = () => {
-      console.log(reportData,"rd")
-      switch (reportType) {
-        case "daily":
-          handleFetchReport(getDailyTransactions, selectedDate);
-          break;
-        case "weekly":
-          handleFetchReport(getWeeklyTransactions, selectedDate);
-          break;
-        case "monthly":
-          handleFetchReport(getMonthlyTransactions, selectedYear, selectedMonth);
-          break;
-        case "custom":
-          if (startDate && endDate) {
-            handleFetchReport(getCustomRangeTransactions, startDate, endDate);
-          }
-          break;
+            break;
+          case "custom":
+            if (startDate && endDate) {
+              response = await getCustomRangeTransactions(startDate, endDate);
+            } else {
+                console.error("Start date and end date are required for custom range.");
+            }
+            break;
+            default:
+                response = { data: null };
+        }
+        setTransactionReportData(response?.data || null);
+      } catch (err) {
+        console.error("Error fetching transaction report:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -223,8 +318,8 @@ const ReportsApp = () => {
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Report Type</label>
               <select 
-                value={reportType} 
-                onChange={(e) => setReportType(e.target.value)}
+                value={reportType} // Uses prop state
+                onChange={(e) => handleReportTypeChange(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 hover:bg-white"
               >
                 <option value="daily">Daily Report</option>
@@ -265,7 +360,7 @@ const ReportsApp = () => {
                   <input 
                     type="number" 
                     value={selectedYear} 
-                    onChange={(e) => setSelectedYear(e.target.value)}
+                    onChange={(e) => setSelectedYear(parseInt(e.target.value) || new Date().getFullYear())}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 hover:bg-white"
                   />
                 </div>
@@ -273,7 +368,7 @@ const ReportsApp = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Month</label>
                   <select 
                     value={selectedMonth} 
-                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 hover:bg-white"
                   >
                     {[...Array(12)].map((_, i) => (
@@ -312,21 +407,22 @@ const ReportsApp = () => {
 
           <button 
             onClick={generateReport} 
-            disabled={loading}
+            disabled={loading || (reportType === 'custom' && (!startDate || !endDate))}
             className="mt-6 w-full md:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Loading...' : 'Generate Report'}
           </button>
         </div>
 
-        {reportData && (
+        {transactionReportData && (
           <div className="space-y-6 animate-fadeIn">
+            {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-blue-100 text-sm font-medium mb-1">Books Issued</p>
-                    <p className="text-4xl font-bold">{reportData.issued?.count || 0}</p>
+                    <p className="text-4xl font-bold">{transactionReportData.issued?.count || 0}</p>
                   </div>
                   <Book className="text-blue-200" size={48} />
                 </div>
@@ -336,54 +432,87 @@ const ReportsApp = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-green-100 text-sm font-medium mb-1">Books Returned</p>
-                    <p className="text-4xl font-bold">{reportData.returned?.count || 0}</p>
+                    <p className="text-4xl font-bold">{transactionReportData.returned?.count || 0}</p>
                   </div>
                   <CheckCircle className="text-green-200" size={48} />
                 </div>
               </div>
 
-              {reportData.averages && (
+              {/* Renders if it's weekly, monthly, or custom (i.e., if averages exist) */}
+              {transactionReportData.averages && (
                 <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-purple-100 text-sm font-medium mb-1">Avg. Per Day</p>
+                      <p className="text-purple-100 text-sm font-medium mb-1">Avg. Per Period</p>
                       <p className="text-2xl font-bold">
-                        {reportData.averages.issuedPerDay} / {reportData.averages.returnedPerDay}
+                        {transactionReportData.averages.issuedPerDay} / {transactionReportData.averages.returnedPerDay}
                       </p>
-                      <p className="text-xs text-purple-100 mt-1">Issued / Returned</p>
+                      <p className="text-xs text-purple-100 mt-1">Issued / Returned (Per Day)</p>
                     </div>
                     <TrendingUp className="text-purple-200" size={48} />
                   </div>
                 </div>
               )}
             </div>
+            
+            {/* Daily Breakdown Chart (for weekly, monthly, custom) */}
+            {(reportType !== 'daily' && chartData.length > 0) && (
+                <div className="bg-white rounded-xl shadow-lg p-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-6">Daily Trend</h3>
+                    <ResponsiveContainer width="100%" height={350}>
+                        <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="date" stroke="#6b7280" angle={-30} textAnchor="end" height={50} interval="preserveStartEnd" />
+                            <YAxis stroke="#6b7280" />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                            <Legend />
+                            <Line type="monotone" dataKey="Issued" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 8 }} />
+                            <Line type="monotone" dataKey="Returned" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 8 }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            )}
           </div>
         )}
       </div>
     );
   };
 
-  const BookReportsView = () => {
-    const [bookReportType, setBookReportType] = useState("most-issued");
-
-
-    const generateReport = () => {
-      switch (bookReportType) {
-        case "most-issued":
-          handleFetchReport(getMostIssuedBooks, 10);
-          break;
-        case "by-status":
-          handleFetchReport(getBooksByStatus);
-          break;
-        case "lost":
-          handleFetchReport(getLostBooksReport);
-          break;
-        case "writeOff":
-          handleFetchReport(getWriteOffBooksReport);
-          break;
+  // Destructure bookReportType and setBookReportType from props
+  const BookReportsView = ({ bookReportType, setBookReportType }) => {
+    // Clear data only when report type changes
+    const handleReportTypeChange = (newType) => {
+      setBookReportType(newType); // Uses prop setter
+      setBookReportData(null);
     };
-  }
 
+    const generateReport = async () => {
+      setLoading(true);
+      try {
+        let response;
+        switch (bookReportType) {
+          case "most-issued":
+            response = await getMostIssuedBooks(10);
+            break;
+          case "by-status":
+            response = await getBooksByStatus();
+            break;
+          case "lost":
+            response = await getLostBooksReport();
+            break;
+          case "writeOff":
+            response = await getWriteOffBooksReport();
+            break;
+            default:
+                response = { data: null };
+        }
+        setBookReportData(response?.data || null);
+      } catch (err) {
+        console.error("Error fetching book report:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     return (
       <div className="space-y-6 animate-fadeIn">
@@ -392,8 +521,8 @@ const ReportsApp = () => {
         <div className="bg-white rounded-xl shadow-lg p-6">
           <label className="block text-sm font-semibold text-gray-700 mb-2">Report Type</label>
           <select 
-            value={bookReportType} 
-            onChange={(e) => setBookReportType(e.target.value)}
+            value={bookReportType} // Uses prop state
+            onChange={(e) => handleReportTypeChange(e.target.value)}
             className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 hover:bg-white"
           >
             <option value="most-issued">Most Issued Books</option>
@@ -410,15 +539,23 @@ const ReportsApp = () => {
           </button>
         </div>
 
-        {reportData && bookReportType === 'most-issued' && (
+        {/* Most Issued Books - Bar Chart (Vertical Layout) */}
+        {bookReportData && bookReportType === 'most-issued' && Array.isArray(bookReportData) && (
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h3 className="text-xl font-bold text-gray-800 mb-6">Top 10 Most Issued Books</h3>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={reportData} layout="vertical">
+              <BarChart 
+                data={bookReportData.slice().reverse()} 
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis type="number" stroke="#6b7280" />
-                <YAxis dataKey="title" type="category" width={200} stroke="#6b7280" />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                <YAxis dataKey="title" type="category" width={200} stroke="#6b7280" /> 
+                <Tooltip 
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
+                    formatter={(value, name, props) => [`Issued: ${value}`, props.payload.author]}
+                />
                 <Bar dataKey="issueCount" fill="url(#barGradient)" radius={[0, 8, 8, 0]} />
                 <defs>
                   <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
@@ -431,47 +568,82 @@ const ReportsApp = () => {
           </div>
         )}
 
-        {reportData && (bookReportType === 'lost' || bookReportType === 'writeOff') && (
+        {/* Books by Status - Bar Chart (Regular) */}
+        {bookReportData && bookReportType === 'by-status' && Array.isArray(bookReportData) && (
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-6">Books by Status</h3>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={bookReportData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="_id" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* Lost/Write-off Summary Card */}
+        {bookReportData && (bookReportType === 'lost' || bookReportType === 'writeOff') && (
+          <div className="bg-white rounded-xl shadow-lg p-6 animate-fadeIn">
+            <h3 className="text-xl font-bold text-gray-800 mb-6">{bookReportType === 'lost' ? 'Lost Books Summary' : 'Write-off Books Summary'}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-6 border-l-4 border-red-500">
                 <p className="text-sm text-gray-600 font-medium mb-2">Total Books</p>
                 <p className="text-4xl font-bold text-red-600">
-                  {reportData.totalLost || reportData.totalWriteOff || 0}
+                  {bookReportData.totalLost || bookReportData.totalWriteOff || 0}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-6 border-l-4 border-red-500">
                 <p className="text-sm text-gray-600 font-medium mb-2">Total Value</p>
                 <p className="text-4xl font-bold text-red-600">
-                  ₹{reportData.totalValue?.toLocaleString() || 0}
+                  ₹{bookReportData.totalValue?.toLocaleString() || 0}
                 </p>
               </div>
             </div>
+            <p className="text-sm text-gray-500 mt-4">Note: Value is based on the book's rate at the time of procurement.</p>
           </div>
         )}
       </div>
     );
   };
 
-  const MemberReportsView = () => {
-    const [memberReportType, setMemberReportType] = useState("by-type");
+  // Destructure memberReportType and setMemberReportType from props
+  const MemberReportsView = ({ memberReportType, setMemberReportType }) => {
+    // Clear data only when report type changes
+    const handleReportTypeChange = (newType) => {
+      setMemberReportType(newType); // Uses prop setter
+      setMemberReportData(null);
+    };
 
-    const generateReport = () => {
-     switch (memberReportType) {
-        case "by-type":
-          handleFetchReport(getMembersByType);
-          break;
-        case "by-course":
-          handleFetchReport(getMembersByCourse);
-          break;
-        case "by-year":
-          handleFetchReport(getMembersByYear);
-          break;
-        case "inactive":
-          handleFetchReport(getInactiveMembersReport);
-          break;
+    const generateReport = async () => {
+      setLoading(true);
+      try {
+        let response;
+        switch (memberReportType) {
+          case "by-type":
+            response = await getMembersByType();
+            break;
+          case "by-course":
+            response = await getMembersByCourse();
+            break;
+          case "by-year":
+            response = await getMembersByYear();
+            break;
+          case "inactive":
+            response = await getInactiveMembersReport();
+            break;
+            default:
+                response = { data: null };
+        }
+        setMemberReportData(response?.data || null);
+      } catch (err) {
+        console.error("Error fetching member report:", err);
+      } finally {
+        setLoading(false);
       }
-  }
+    };
 
     return (
       <div className="space-y-6 animate-fadeIn">
@@ -480,13 +652,13 @@ const ReportsApp = () => {
         <div className="bg-white rounded-xl shadow-lg p-6">
           <label className="block text-sm font-semibold text-gray-700 mb-2">Report Type</label>
           <select 
-            value={memberReportType} 
-            onChange={(e) => setMemberReportType(e.target.value)}
+            value={memberReportType} // Uses prop state
+            onChange={(e) => handleReportTypeChange(e.target.value)}
             className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 hover:bg-white"
           >
-            <option value="by-type">Members by Type</option>
-            <option value="by-course">Members by Course</option>
-            <option value="by-year">Members by Year</option>
+            <option value="by-type">Members by Type (Total & Status)</option>
+            <option value="by-course">Members by Course (Students)</option>
+            <option value="by-year">Members by Year (Type Breakdown)</option>
             <option value="inactive">Inactive Members</option>
           </select>
           <button 
@@ -498,31 +670,50 @@ const ReportsApp = () => {
           </button>
         </div>
 
-        {reportData && memberReportType !== 'inactive' && (
+        {/* Member Distribution Charts */}
+        {memberReportData && memberReportType !== 'inactive' && Array.isArray(memberReportData) && (
           <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-6">Distribution by {memberReportType === 'by-type' ? 'Type' : memberReportType === 'by-course' ? 'Course' : 'Year of Joining'}</h3>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={reportData}>
+              <BarChart data={memberReportData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="_id" stroke="#6b7280" />
                 <YAxis stroke="#6b7280" />
                 <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                 <Legend />
-                <Bar dataKey="count" fill="#3b82f6" name="Total" radius={[8, 8, 0, 0]} />
-                {reportData[0]?.active !== undefined && (
-                  <Bar dataKey="active" fill="#10b981" name="Active" radius={[8, 8, 0, 0]} />
+                
+                {/* Condition: Members by Type/Course - shows total and active comparison */}
+                {(memberReportType === 'by-type' || memberReportType === 'by-course') && (
+                    <>
+                        <Bar dataKey="count" fill="#3b82f6" name="Total Count" radius={[8, 8, 0, 0]} />
+                        <Bar dataKey="active" fill="#10b981" name="Active Members" radius={[8, 8, 0, 0]} />
+                    </>
+                )}
+                
+                {/* Condition: Members by Year - shows stacked breakdown (new) */}
+                {memberReportType === 'by-year' && (
+                    <>
+                        <Bar dataKey="students" stackId="a" fill="#3b82f6" name="Students" radius={[8, 8, 0, 0]} />
+                        <Bar dataKey="faculty" stackId="a" fill="#f59e0b" name="Faculty" />
+                        <Bar dataKey="special" stackId="a" fill="#ef4444" name="Special" />
+                    </>
                 )}
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
-        {reportData && memberReportType === 'inactive' && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="bg-amber-50 border-l-4 border-amber-500 rounded-lg p-6 mb-6">
-              <h3 className="text-xl font-bold text-gray-800">
-                Total Inactive Members: <span className="text-amber-600">{reportData.totalInactive}</span>
-              </h3>
+        {/* Inactive Members Summary Card */}
+        {memberReportData && memberReportType === 'inactive' && (
+          <div className="bg-white rounded-xl shadow-lg p-6 animate-fadeIn">
+             <h3 className="text-xl font-bold text-gray-800 mb-6">Inactive Member Summary</h3>
+            <div className="bg-amber-50 border-l-4 border-amber-500 rounded-lg p-6">
+              <p className="text-sm text-gray-600 font-medium mb-2">Total Inactive Members (Card Status 'inactive')</p>
+              <p className="text-4xl font-bold text-amber-600">
+                {memberReportData.totalInactive}
+              </p>
             </div>
+            <p className="text-sm text-gray-500 mt-4">This list shows members explicitly marked as inactive in the system.</p>
           </div>
         )}
       </div>
@@ -530,16 +721,36 @@ const ReportsApp = () => {
   };
 
   const FinancialReportsView = () => {
+    // Separate useEffect to ensure financial report loads only when the tab is active
     useEffect(() => {
-      handleFetchReport(getBookValueReport);
-      console.log("financial report loaded");
-    }, []);
+        // Prevent loading if not on the financial tab, or if data is already present
+        if (activeTab !== 'financial' || financialReportData) return;
+
+        const loadFinancialReport = async () => {
+          setLoading(true);
+          try {
+            const response = await getBookValueReport();
+            setFinancialReportData(response?.data || null);
+          } catch (err) {
+            console.error("Error loading financial report:", err);
+          } finally {
+            setLoading(false);
+          }
+        };
+        loadFinancialReport();
+    }, [activeTab]);
 
     return (
       <div className="space-y-6 animate-fadeIn">
         <h2 className="text-3xl font-bold text-gray-800">Financial Reports</h2>
+        
+        {loading && !financialReportData && (
+            <div className="bg-white rounded-xl shadow-lg p-6 text-center text-gray-500">
+                Fetching financial data...
+            </div>
+        )}
 
-        {reportData && (
+        {financialReportData && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
@@ -547,7 +758,7 @@ const ReportsApp = () => {
                   <div>
                     <p className="text-green-100 text-sm font-medium mb-1">Total Value</p>
                     <p className="text-4xl font-bold">
-                      ₹{reportData.overall?.totalValue?.toLocaleString() || 0}
+                      ₹{financialReportData.overall?.totalValue?.toLocaleString() || 0}
                     </p>
                   </div>
                   <div className="bg-white bg-opacity-20 rounded-full p-4">
@@ -560,7 +771,7 @@ const ReportsApp = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-blue-100 text-sm font-medium mb-1">Total Books</p>
-                    <p className="text-4xl font-bold">{reportData.overall?.totalBooks || 0}</p>
+                    <p className="text-4xl font-bold">{financialReportData.overall?.totalBooks || 0}</p>
                   </div>
                   <div className="bg-white bg-opacity-20 rounded-full p-4">
                     <Book className="text-white" size={40} />
@@ -573,7 +784,7 @@ const ReportsApp = () => {
                   <div>
                     <p className="text-purple-100 text-sm font-medium mb-1">Average Value</p>
                     <p className="text-4xl font-bold">
-                      ₹{reportData.overall?.averageValue?.toFixed(2) || 0}
+                      ₹{financialReportData.overall?.averageValue?.toFixed(2) || 0}
                     </p>
                   </div>
                   <div className="bg-white bg-opacity-20 rounded-full p-4">
@@ -589,10 +800,11 @@ const ReportsApp = () => {
                 <ResponsiveContainer width="100%" height={320}>
                   <PieChart>
                     <Pie 
-                      data={reportData.byStatus} 
+                      data={financialReportData.byStatus} 
                       cx="50%" 
                       cy="50%" 
                       labelLine={false}
+                      // Correctly use the accessor keys from the data structure
                       label={({ _id, totalValue }) => `${_id}: ₹${totalValue.toLocaleString()}`}
                       outerRadius={110} 
                       fill="#8884d8" 
@@ -600,7 +812,7 @@ const ReportsApp = () => {
                       animationBegin={0}
                       animationDuration={800}
                     >
-                      {reportData.byStatus.map((entry, index) => (
+                      {financialReportData.byStatus.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -615,7 +827,7 @@ const ReportsApp = () => {
               <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
                 <h3 className="text-xl font-bold text-gray-800 mb-6">Top Suppliers by Value</h3>
                 <div className="space-y-4">
-                  {reportData.bySupplier?.slice(0, 5).map((supplier, idx) => (
+                  {financialReportData.bySupplier?.slice(0, 5).map((supplier, idx) => (
                     <div 
                       key={idx} 
                       className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-blue-50 hover:to-blue-100 transition-all border border-gray-200"
@@ -650,7 +862,8 @@ const ReportsApp = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+      <script src="https://cdn.tailwindcss.com"></script>
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-xl">
         <div className="max-w-7xl mx-auto px-6 py-6">
@@ -694,7 +907,7 @@ const ReportsApp = () => {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 pb-12">
-        {loading && (
+        {loading && (activeTab !== 'financial' || !financialReportData) && (
           <div className="flex flex-col justify-center items-center py-20">
             <div className="relative">
               <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-blue-600"></div>
@@ -706,15 +919,30 @@ const ReportsApp = () => {
           </div>
         )}
         
-        {!loading && (
+        {!loading || (activeTab === 'financial' && financialReportData) ? (
           <>
             {activeTab === 'dashboard' && <DashboardView />}
-            {activeTab === 'transactions' && <TransactionReportsView />}
-            {activeTab === 'books' && <BookReportsView />}
-            {activeTab === 'members' && <MemberReportsView />}
+            {activeTab === 'transactions' && 
+                <TransactionReportsView 
+                    reportType={transactionReportType} 
+                    setReportType={setTransactionReportType}
+                />
+            }
+            {activeTab === 'books' && 
+                <BookReportsView 
+                    bookReportType={bookReportType} 
+                    setBookReportType={setBookReportType}
+                />
+            }
+            {activeTab === 'members' && 
+                <MemberReportsView 
+                    memberReportType={memberReportType} 
+                    setMemberReportType={setMemberReportType}
+                />
+            }
             {activeTab === 'financial' && <FinancialReportsView />}
           </>
-        )}
+        ) : null}
       </div>
 
       <style>{`
@@ -733,6 +961,7 @@ const ReportsApp = () => {
           animation: fadeIn 0.5s ease-out;
         }
         
+        /* Custom scrollbar hide for tab navigation */
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
@@ -740,6 +969,11 @@ const ReportsApp = () => {
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
+        }
+        
+        /* Set font to Inter */
+        html, body {
+            font-family: 'Inter', sans-serif;
         }
       `}</style>
     </div>
